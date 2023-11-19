@@ -1,5 +1,7 @@
 TITLE - ATIVIDADE - ALUNO: Daniel Scanavini Rossi RA:22000787 | ALUNO: VINICIUS BORGES DE GODOY RA:22006132
 .model small
+
+;Macro para pular linha
 LINHA MACRO
    PUSH AX
    PUSH DX
@@ -9,12 +11,16 @@ LINHA MACRO
    POP DX
    POP AX
 ENDM
+
+;Macro Limpa a tela para o usuário
 LIMPA MACRO
    PUSH AX
    MOV AX,03
    INT 10H
    POP AX
 ENDM
+
+;Macro zera os registradores
 LIMPA_REG  MACRO
    XOR AX,AX
    XOR BX,BX
@@ -23,33 +29,46 @@ LIMPA_REG  MACRO
    XOR DI,DI
    XOR SI,SI
 ENDM
+
 .stack 100h
 .data
+
+;Definições das variáveis e strings para organização do programa
+
 PESO1 EQU 3
 PESO2 EQU 4
+
 ESCOLHA DB 10 DUP(' ')
+
 ALUNOS DB 10 DUP(' '),?,?,?,?
        DB 10 DUP(' '),?,?,?,?
        DB 10 DUP(' '),?,?,?,?
        DB 10 DUP(' '),?,?,?,?
        DB 10 DUP(' '),?,?,?,?
+
 GERENCIA DB 'PROGRAMA GERENCIADOR DE SALA DE AULA!$'
 NOME_ALUNO DB'INSIRA O NOME DO ALUNO:$'
+
 P1 DB 10,13,'INSIRA A NOTA DA P1:$'
 P2 DB 10,13,'INSIRA A NOTA DA P2:$'
 P3 DB 10,13,'INSIRA A NOTA DA P3:$'
+
 PROMPT DB 10,13,'INSIRA O QUE DESEJA REALIZAR:',10,13,'1-ALTERAR NOTAS   2-SAIR DO PROGRAMA',10,13,'>$'
 CHOICE DB 10,13,'INSIRA O NOME DO ALUNO QUE DESEJA ALTERAR O DADO:$'
 NOTA DB 10,13,'INSIRA A NOTA QUE DESEJA ALTERAR',10,13,'1-P1   2-P2   3-P3',10,13,'>$'
 NOTA1 DB 10,13,'INSIRA A NOVA NOTA DA PROVA:$'
 ACABA DB 10,13,'PROGRAMA FINALIZADO$'
+
 .code
+
+;Função principal do programa onde chamamos as outras funções como Nome e Notas
     MAIN PROC
     LIMPA
     MOV AX,@DATA
     MOV DS,AX
     MOV ES,AX
     MOV CX,5
+
 REPETE:
     PUSH CX
     CALL READ_NAME
@@ -79,7 +98,8 @@ FIM:
     MOV AH,4CH  ;FINALIZA O PROGRAMA
     INT 21H
    MAIN ENDP
-   ;LE O NOME DOS ALUNOS
+
+   ;Procedimento que LE O NOME DOS ALUNOS
    READ_NAME PROC
     LEA DX,NOME_ALUNO
     MOV AH,09
@@ -127,7 +147,8 @@ SEGUE:
     MOV ALUNOS[BX][SI],AL
     RET
    READ_GRADES ENDP
-   ;description
+
+   ;Procedimento que realiza o calculo da média do aluno com as notas das 3 provas digitadas
    CALC_MEDIA PROC
     XOR AX,AX
     XOR DX,DX
@@ -158,7 +179,8 @@ SEGUE:
     MOV ALUNOS[BX][SI],AL
     RET   
    CALC_MEDIA ENDP
-   ;description
+
+   ;Procedimento que imprime a matriz onde está os 5 alunos e suas informações como notas e média
 IMPRIME_MATRIZ PROC
     LIMPA
     LEA DX,GERENCIA
@@ -192,7 +214,8 @@ SEGUIR:
     LOOP FUNC
     RET
    IMPRIME_MATRIZ ENDP
-   ;description
+
+   ;Procedimento feito para a ambientação do menu para um melhor conforto ao usuário
    MENU PROC
     LIMPA_REG
     MOV AH,09
@@ -202,7 +225,8 @@ SEGUIR:
     INT 21H
     RET
    MENU ENDP
-   ;description
+
+   ;Procedimento que realiza a alteração na nota por meio de busca de nome, alterando o valor na matriz e recalculando a média
    CHANGE_GRADES PROC
     LIMPA_REG
     LEA DX,CHOICE
